@@ -1,0 +1,26 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<h1>Home Page</h1>
+
+<div>
+
+    <div>
+
+        {% for room in rooms %}
+            <div>
+                <h4>
+                    <!-- {{room.id}} -- <a href="/room/{{room.id}}"> {{room.name}}</a>  -->
+                    <!-- if we change the url path to path('room_page/') from urlpatterns, it won't matter cause 'room' from below, accesses name=room from urlpatters. -->
+                    {{room.id}} -- <a href="{% url 'room' room.id %}"> {{room.name}}</a> 
+
+                </h4>
+            </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
