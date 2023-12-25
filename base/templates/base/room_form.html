@@ -1,0 +1,13 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<form method="POST" action="">
+    {% csrf_token %}
+    <!-- Cross Site Request Forgery protection. -->
+    {{form}}
+    <input  type="submit" value="Submit"/>
+
+</form>
+
+{% endblock %}

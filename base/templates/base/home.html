@@ -5,17 +5,21 @@
 <h1>Home Page</h1>
 
 <div>
-
+    <a href="{% url 'create-room' %}"> Create Room </a>
     <div>
 
         {% for room in rooms %}
             <div>
+                <a href="{% url 'update-room' room.id %}">Update</a>
+                <a href="{% url 'delete-room' room.id %}">Delete</a>
+                <span>@ {{room.host.username}} </span>
                 <h4>
                     <!-- {{room.id}} -- <a href="/room/{{room.id}}"> {{room.name}}</a>  -->
                     <!-- if we change the url path to path('room_page/') from urlpatterns, it won't matter cause 'room' from below, accesses name=room from urlpatters. -->
                     {{room.id}} -- <a href="{% url 'room' room.id %}"> {{room.name}}</a> 
-
                 </h4>
+                <small>{{room.topic.name}}</small>
+                <hr>
             </div>
         {% endfor %}
 
