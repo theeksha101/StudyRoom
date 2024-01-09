@@ -3,3 +3,24 @@
 </a>
 
 <hr>
+
+<form method="GET" action="{% url 'home' %}">
+    <input type="text" name="r" placeholder="Search Rooms...">
+</form>
+<!-- When we submit the above form by entering Python
+    in the input field, the request sent to the server will 
+    be http://127.0.0.1:8000/?r=python -->
+
+{% if request.user.is_authenticated %}
+
+    <a href="{% url 'logout-user' %}">
+        <h3>Logout</h3>
+    </a>
+
+{% elif not user.is_authenticated %}
+
+    <a href="{% url 'login-register' %}">
+        <h3>Login</h3>
+    </a>
+
+{% endif %}

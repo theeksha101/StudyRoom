@@ -26,7 +26,12 @@ SECRET_KEY = 'django-insecure-ff6&2p0n()-yoc_3t%1z%x%#ytmlohfmign0ao$_&8t9o(kgxn
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
 
 # Application definition
 
