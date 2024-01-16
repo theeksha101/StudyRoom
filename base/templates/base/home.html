@@ -24,6 +24,12 @@
         {% for topic in topics %}
            <div>
                 <a href="{% url 'home' %}?r={{topic.name}}"> {{topic.name}} </a>
+                &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                {% if topic.follow == False %}
+                    <a href="{% url 'is-following' topic.id %}">Follow</a>
+                {% else %}
+                    <a href="{% url 'is-following' topic.id %}">Following</a>
+                {% endif %}
            </div>
         {% endfor %}
 

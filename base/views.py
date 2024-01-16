@@ -29,11 +29,10 @@ def home(request):
     topic = Topic.objects.all()
     room_count = rooms.count()
     all_users = User.objects.values()
-    
+    # all_user = User.objects.get(username='deeksha')
     context = {'rooms': rooms, 'topics': topic, 'room_count': room_count,
                'all_users': all_users}
-    print(type(rooms[0].host))
-    print(type(request.user))
+    # print(all_user)
     return render(request, 'base/home.html', context)
 
 def room(request, pk):
@@ -77,7 +76,7 @@ def delete_room(request, pk):
     return render(request, 'base/delete.html', {'obj':room})
 
 
-def login_register(request):
+def login_user(request):
     if request.method == 'POST':
         
         username = request.POST.get('username')
@@ -95,9 +94,8 @@ def login_register(request):
         else:
             messages.error(request, 'username or password does not match')
 
-    context = {}
-    print('inside login_register view function')
-    return render(request, 'base/login_register.html', context)
+    return render(request, 'base/login_user.html')
+
 
 def logout_user(request):
     if request.method == 'POST':
@@ -106,3 +104,36 @@ def logout_user(request):
     context = {}
     return render(request, 'base/logout_user.html', context)
 
+
+def is_following(request, id_):
+    is_follow = Topic.objects.get(id=id_)
+    if is_follow.follow == False:
+        is_follow.follow = True
+        is_follow.save()
+    else:
+        is_follow.follow = False
+        is_follow.save()
+    return redirect('home')
+
+
+def register_user(request):
+    if request.method == 'POST':
+
+        first_name = request.POST.get('first-name')
+        last_name = request.POST.get('last-name')
+        email = request.POST.get('email')
+        username = request.POST.get('username')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+
+        if password1 != password2:
+            messages.error(request, 'passwords do not match')
+        else:
+            user = User.objects.create_user(username=username,
+                        password=password1, email=email)
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
+        return redirect('login-user')
+    
+    return render(request, 'base/register_user.html')
