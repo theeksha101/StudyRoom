@@ -1,5 +1,5 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content %}
 
 <h1>Home Page</h1>
@@ -11,11 +11,15 @@
     }
 </style>
 
+<script src="{% static 'index.js' %}"></script>
+
 <div class="home-container">
 
     <div>
         <h2>Browse Topics</h2>
         <hr>
+
+        <input type="button" onclick="changeStatus()" id="followButton" value="Follow"/>
 
         <div>
             <a href="{% url 'home' %}">All</a>
@@ -25,11 +29,11 @@
            <div>
                 <a href="{% url 'home' %}?r={{topic.name}}"> {{topic.name}} </a>
                 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                {% if topic.follow == False %}
-                    <a href="{% url 'is-following' topic.id %}">Follow</a>
-                {% else %}
-                    <a href="{% url 'is-following' topic.id %}">Following</a>
-                {% endif %}
+            {% if topic.name in list_topic_following %}
+                <a href="{% url 'is-following' topic.id %}">Following</a>
+            {% else %}
+                <a href="{% url 'is-following' topic.id %}">Follow</a>                    
+            {% endif %}
            </div>
         {% endfor %}
 

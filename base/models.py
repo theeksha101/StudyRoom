@@ -45,3 +45,15 @@ class Message(models.Model):
 
 # class UserProfile(models.Model):
     # 
+
+class UserFollowing(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, null=True)
+
+    # def get_user(self):
+    #     return "\n".join([u.first_name for u in self.user.all()])
+ 
+    def __str__(self) -> str:
+        # return str(self.user)
+        return f"{str(self.user)}, {self.topic}"

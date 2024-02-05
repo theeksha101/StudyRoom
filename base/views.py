@@ -3,15 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.db.models import Q
-from .models import Room, Topic
+from .models import Room, Topic, UserFollowing
 from .forms import RoomForm
-
-# rooms = [
-#     {'id': 1, 'name':'Python'},
-#     {'id': 2, 'name':'Designers'},
-#     {'id': 3, 'name':'Frontend Developers'}
-# ]
-
 
 
 def home(request):
@@ -26,13 +19,16 @@ def home(request):
         # Q(host__icontains=r)
         ) 
     # http://127.0.0.1:8000/?r=ja (this is what icontains wil do)
-    topic = Topic.objects.all()
+    topics = Topic.objects.all()
     room_count = rooms.count()
     all_users = User.objects.values()
-    # all_user = User.objects.get(username='deeksha')
-    context = {'rooms': rooms, 'topics': topic, 'room_count': room_count,
-               'all_users': all_users}
-    # print(all_user)
+    logged_in_user = str(request.user)
+    topic_following = UserFollowing.objects.filter(user__username__contains=logged_in_user)
+    list_topic_following = [str(topic_following[i].topic) for i in range(len(topic_following))]
+
+    context = {'rooms': rooms, 'topics': topics, 'room_count': room_count,
+               'all_users': all_users, 'list_topic_following': list_topic_following}
+    print(list_topic_following)
     return render(request, 'base/home.html', context)
 
 def room(request, pk):
