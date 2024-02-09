@@ -12,14 +12,13 @@
 </style>
 
 <script src="{% static 'index.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <div class="home-container">
 
     <div>
         <h2>Browse Topics</h2>
         <hr>
-
-        <input type="button" onclick="changeStatus()" id="followButton" value="Follow"/>
 
         <div>
             <a href="{% url 'home' %}">All</a>
@@ -29,11 +28,8 @@
            <div>
                 <a href="{% url 'home' %}?r={{topic.name}}"> {{topic.name}} </a>
                 &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-            {% if topic.name in list_topic_following %}
-                <a href="{% url 'is-following' topic.id %}">Following</a>
-            {% else %}
-                <a href="{% url 'is-following' topic.id %}">Follow</a>                    
-            {% endif %}
+
+                <input type="button" onclick="changeStatus(this)" data-topic="{{ topic.name }}" value="{% if topic.name in list_topic_following %} Following {% else %} Follow {% endif %}"/>
            </div>
         {% endfor %}
 

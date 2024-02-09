@@ -10,6 +10,7 @@ urlpatterns = [
     path('create-room/', views.create_room, name='create-room'),
     path('update-room/<str:pk>', views.update_room, name='update-room'),
     path('delete-room/<str:pk>', views.delete_room, name='delete-room'),
-    path('is-following/<str:id_>', views.is_following, name='is-following'),
+    # path('is-following/<str:id_>', views.is_following, name='is-following'),
     path('register/', views.register_user, name='register-user'),
+    path('toggle_follow/', views.toggle_follow, name='toggle_follow'),
 ]

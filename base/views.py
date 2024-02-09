@@ -5,6 +5,9 @@ from django.contrib.auth import login, logout, authenticate
 from django.db.models import Q
 from .models import Room, Topic, UserFollowing
 from .forms import RoomForm
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 
 def home(request):
@@ -28,7 +31,7 @@ def home(request):
 
     context = {'rooms': rooms, 'topics': topics, 'room_count': room_count,
                'all_users': all_users, 'list_topic_following': list_topic_following}
-    print(list_topic_following)
+
     return render(request, 'base/home.html', context)
 
 def room(request, pk):
@@ -101,15 +104,26 @@ def logout_user(request):
     return render(request, 'base/logout_user.html', context)
 
 
-def is_following(request, id_):
-    is_follow = Topic.objects.get(id=id_)
-    if is_follow.follow == False:
-        is_follow.follow = True
-        is_follow.save()
+@csrf_exempt
+@login_required
+def toggle_follow(request):
+    if request.method == 'POST':
+        user = request.user
+        topic_name = request.POST.get('topic_name')
+        topic = Topic.objects.get(name=topic_name)
+
+        try:
+            follow_entry = UserFollowing.objects.get(user=user, topic=topic)
+            print(follow_entry)  # Here is the problem
+            follow_entry.delete()
+            message = 'Unfollowed {}'.format(topic_name)
+        except UserFollowing.DoesNotExist:
+            UserFollowing.objects.create(user=user, topic=topic)
+            message = 'Followed {}'.format(topic_name)
+        
+        return JsonResponse({'message':message})
     else:
-        is_follow.follow = False
-        is_follow.save()
-    return redirect('home')
+        return JsonResponse({'error': 'Invalid request method'})
 
 
 def register_user(request):
