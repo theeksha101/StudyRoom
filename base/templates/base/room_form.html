@@ -2,12 +2,14 @@
 
 {% block content %}
 
-<form method="POST" action="">
-    {% csrf_token %}
-    <!-- Cross Site Request Forgery protection. -->
-    {{form}}
-    <input  type="submit" value="Submit"/>
-
-</form>
+<div>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <!-- Cross Site Request Forgery protection. -->
+        {{form}}
+        <input  type="submit" value="Submit"/>
+    
+    </form>
+</div>
 
 {% endblock %}

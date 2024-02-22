@@ -2,6 +2,28 @@
 
 {% block content %}
 
-<h1>{{room.name}}</h1>
-<h4>{{room.description}} </h4>
+<div>
+    <div>
+        <h1>{{room.name}}</h1>    
+    </div>
+
+    <div>
+        <h4>{{room.description}} </h4>
+    </div>
+    
+    <div>
+        <p>{{room.created}}
+            <br>
+            hosted by {{room.host.username }}
+        </p>
+    </div>
+    <div>
+        <ul>
+            {% for message in messages %}
+                <li>{{ message.body }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
 {% endblock %}

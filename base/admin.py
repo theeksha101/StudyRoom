@@ -7,7 +7,11 @@ class TopicFollowing(admin.ModelAdmin):
     list_display = ['user', 'topic']
 
 
+class MessageManager(admin.ModelAdmin):
+    list_display = ['user', 'room', 'body']
+
+
 admin.site.register(Room)
 admin.site.register(Topic)
-admin.site.register(Message)
+admin.site.register(Message, MessageManager)
 admin.site.register(UserFollowing, TopicFollowing)

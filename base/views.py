@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.db.models import Q
-from .models import Room, Topic, UserFollowing
+from .models import Room, Topic, UserFollowing, Message
 from .forms import RoomForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -34,9 +34,12 @@ def home(request):
 
     return render(request, 'base/home.html', context)
 
+
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    context = {'room': room}
+    message = Message.objects.all() 
+    context = {'room': room, 'messages': message}
+    print(message)
     return render(request, 'base/room.html', context)
 
 

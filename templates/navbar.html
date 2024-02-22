@@ -1,28 +1,44 @@
-<a href="/">
-    <h1>LOGO</h1>
-</a>
 
+
+<nav>
+    <div>
+        <ul class="nav justify-content-between">
+            <li>
+                <a href="/">
+                    <h1>Home</h1>
+                </a>
+            </li>
+            <li>
+                <form method="GET" action="{% url 'home' %}">
+                    <input class="form-control" type="text" name="r" placeholder="Search Rooms...">
+                </form>
+            </li>
+            <li>
+                {% if request.user.is_authenticated %}
+    
+                    <a href="{% url 'logout-user' %}">
+                        <h3>Logout</h3>
+                    </a>
+            
+                {% elif not user.is_authenticated %}
+            
+                    <a href="{% url 'login-user' %}">
+                        <h3>Login</h3>
+                    </a>
+            
+                {% endif %}
+            </li>
+            <!-- Add more navigation links as needed -->
+        </ul>
+    </div>
+</nav>
 <hr>
 
-<form method="GET" action="{% url 'home' %}">
-    <input type="text" name="r" placeholder="Search Rooms...">
-</form>
+
 <!-- When we submit the above form by entering Python
     in the input field, the request sent to the server will 
     be http://127.0.0.1:8000/?r=python -->
 
-{% if request.user.is_authenticated %}
 
-    <a href="{% url 'logout-user' %}">
-        <h3>Logout</h3>
-    </a>
-
-{% elif not user.is_authenticated %}
-
-    <a href="{% url 'login-user' %}">
-        <h3>Login</h3>
-    </a>
-
-{% endif %}
 
 

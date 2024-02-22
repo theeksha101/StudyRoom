@@ -6,9 +6,7 @@ from django.contrib.auth.models import User
 
 class Topic(models.Model):
     name = models.CharField(max_length=200)
-    follow = models.BooleanField(default=False)
-    # follower = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
-      
+  
     def __str__(self) -> str:
         return self.name
     
@@ -40,7 +38,7 @@ class Message(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return self.body
+        return f"{str(self.user), self.room, self.body}"
 
 
 # class UserProfile(models.Model):
@@ -52,5 +50,4 @@ class UserFollowing(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE, null=True)
     
     def __str__(self) -> str:
-        # return str(self.user)
         return f"{str(self.user)}, {self.topic}"
