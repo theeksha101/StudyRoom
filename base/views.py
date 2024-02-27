@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
@@ -37,9 +38,14 @@ def home(request):
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    message = Message.objects.all() 
-    context = {'room': room, 'messages': message}
-    print(message)
+    # msg = Message.objects.all()
+    messages = Message.objects.filter(room=pk)
+    if request.method == 'POST':
+        inc_msg = request.POST.get('inc_msg')
+        msg = Message.objects.create(user=request.user, room=room, body=inc_msg)
+        msg.save()
+        return redirect(reverse('room', args=[pk]))
+    context = {'room': room, 'messages': messages}
     return render(request, 'base/room.html', context)
 
 

@@ -1,29 +1,59 @@
-{% extends 'main.html' %}
+<head>
+    {% extends 'main.html' %}
+    {% load static %}
+</head>
 
-{% block content %}
-
-<div>
-    <div>
-        <h1>{{room.name}}</h1>    
-    </div>
-
-    <div>
-        <h4>{{room.description}} </h4>
-    </div>
+<body>
+    {% block content %}
+        <div class="room-container">
+            <div class="row">
+                <div class="column side"></div>
+                <div class="column middle">
+                    <div>
+                        <h1>{{room.name}}</h1>    
+                    </div>
+                
+                    <div>
+                        <h4>{{room.description}} </h4>
+                    </div>
+                    
+                    <div>
+                        <p>{{room.created}}
+                            <hr>
+                            hosted by {{room.host.username }}
+                        </p>
+                    </div>
+                    <div class="second-row">
+                        
+                            {% for message in messages %}
+                                <p style="font-size: 12px;">@ {{message.user}}| {{ message.created }}</p>
+                                <div class="grid-item">
+                                    <p>{{ message.body }}</p>
+                                    <form action="">
+                                        <!-- <button class="trash">  <img src="{% static 'images/trash.svg' %}"/>
+                                        </button>
+                                        <button class="trash">  <img src="{% static 'images/edit.svg' %}"/>
+                                        </button> -->
+                                        <button class="more">  <img src="{% static 'images/more.svg' %}"/>
+                                        </button> 
+                                    </form>                                  
+                                </div>
+                                <hr>
+                            {% endfor %}
+                        
+                    </div>
+                    <div>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="text" class="form-control" name="inc_msg" style="width: 750px; margin-top: 10px;"/>
+                        </form>
+                    </div>
+                </div>
+                <div class="column side"></div>
+            </div>
+            
+            <div class="footer"></div>
+        </div>
     
-    <div>
-        <p>{{room.created}}
-            <br>
-            hosted by {{room.host.username }}
-        </p>
-    </div>
-    <div>
-        <ul>
-            {% for message in messages %}
-                <li>{{ message.body }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
-
-{% endblock %}
+    {% endblock %}
+</body>

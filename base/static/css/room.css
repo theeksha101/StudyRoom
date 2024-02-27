@@ -1,0 +1,80 @@
+
+* {
+    box-sizing: border-box;
+}
+.room-container{
+    margin-top: 50px;
+}
+/* Style the header */
+.header {
+  background-color: #f1f1f1;
+  padding: 30px;
+  text-align: center;
+  font-size: 35px;
+}
+
+.grid-item{
+    display: flex;
+    height: 8%;
+    justify-content: space-between;
+}
+
+.more{
+    border: none;
+}
+
+/* Create three unequal columns that floats next to each other */
+.column {
+  float: left;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+/* Left and right column */
+.column.side {
+  width: 25%;
+
+}
+
+/* Middle column */
+.column.middle {
+  width: 50%;
+  margin-left: 50px;
+  border-radius: 8px;
+  background-color:rgb(176, 176, 255);
+  height: 530px;
+}
+
+/* Additional styling for the second row */
+.column.middle .second-row {
+    margin-top: 20px; /* Adjust the margin as needed */
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    padding: 20px;
+    height: 300px;
+    overflow: scroll;
+}   
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Style the footer */
+.footer {
+  background-color: #f1f1f1;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+@media (max-width: 600px) {
+  .column.side, .column.middle {
+    width: 100%;
+  }
+}
+
+
+
