@@ -14,7 +14,15 @@
     <input type="submit" value="Login" />
 
 </form>
-
+<div>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
 <div>
     <p>Don't have an account? <span><a href="{% url 'register-user' %}">Register!</a></span></p>
 </div>

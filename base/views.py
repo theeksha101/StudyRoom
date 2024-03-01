@@ -9,6 +9,9 @@ from .forms import RoomForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from .service import RoomService, UserService
+room_service = RoomService()
+user_service = UserService()
 
 
 def home(request):
@@ -22,7 +25,7 @@ def home(request):
         Q(description__icontains=r) 
         # Q(host__icontains=r)
         ) 
-    # http://127.0.0.1:8000/?r=ja (this is what icontains wil do)
+    # http://127.0.0.1:8000/?r=ja (this is what icontains will do)
     topics = Topic.objects.all()
     room_count = rooms.count()
     all_users = User.objects.values()
@@ -35,73 +38,66 @@ def home(request):
 
     return render(request, 'base/home.html', context)
 
-
+    
 def room(request, pk):
-    room = Room.objects.get(id=pk)
-    # msg = Message.objects.all()
-    messages = Message.objects.filter(room=pk)
+    print(request)
     if request.method == 'POST':
         inc_msg = request.POST.get('inc_msg')
-        msg = Message.objects.create(user=request.user, room=room, body=inc_msg)
-        msg.save()
+        user = request.user
+        room_service.create_message(user, inc_msg, pk)
         return redirect(reverse('room', args=[pk]))
-    context = {'room': room, 'messages': messages}
+    context = {'room': room_service.get_room(pk), 'messages': room_service.get_room_msg(pk)}
     return render(request, 'base/room.html', context)
 
 
 def create_room(request):
     if request.user.is_authenticated:
-        form = RoomForm(request.POST)
         if request.method == 'POST':
-            if form.is_valid():
-                form.save()
-                return redirect('home')
+            room_info = request.POST
+            room_service.create_room(room_info)
+            return redirect('home')
+        form = RoomForm(request.POST)  # Did not make changes here; this instance will just display the form
         context = {'form': form}
-        print(form)
         return render(request, 'base/room_form.html', context)
     else:
-        return redirect('login_register')
+        return redirect('login_user')
+
 
 def update_room(request, pk):
-    room = Room.objects.get(id=pk)
-    form = RoomForm(instance=room)
-
     if request.method == 'POST':
-        form = RoomForm(request.POST, instance=room)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
+        room_info = request.POST
+        room_service.update_room(room_info, pk)
+        return redirect('home')
         
+    form = room_service.get_form(pk=pk)
     context = {'form': form}
     return render(request, 'base/room_form.html', context)
 
 
 def delete_room(request, pk):
-    room = Room.objects.get(id=pk)
     if request.method == 'POST':
-        room.delete()
+        room_service.delete_room(pk)
         return redirect('home')
     return render(request, 'base/delete.html', {'obj':room})
 
 
+
 def login_user(request):
     if request.method == 'POST':
-        
-        username = request.POST.get('username')
+        username = request.POST.get('username')  # These lines of code gets username and password from http
         password = request.POST.get('password')
-
         try:
-            user = User.objects.get(username=username)
-        except:
-            messages.error(request, 'User does not exist')
-
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
+            user = user_service.get_username(username=username)
+            user = authenticate(request, username=username, password=password)
+            if user is None: 
+                # messages.error(request, "Username or password do not match")
+                raise Exception("Username or password do not match")
+            
+            login(request, user)  # request parameter is essential to keep the authentication status and session cookie
             return redirect('home')
-        else:
-            messages.error(request, 'username or password does not match')
-
+        except Exception as e:
+            messages.error(request, str(e))
+    
     return render(request, 'base/login_user.html')
 
 
@@ -111,28 +107,6 @@ def logout_user(request):
         return redirect('home')
     context = {}
     return render(request, 'base/logout_user.html', context)
-
-
-@csrf_exempt
-@login_required
-def toggle_follow(request):
-    if request.method == 'POST':
-        user = request.user
-        topic_name = request.POST.get('topic_name')
-        topic = Topic.objects.get(name=topic_name)
-
-        try:
-            follow_entry = UserFollowing.objects.get(user=user, topic=topic)
-            print(follow_entry)  # Here is the problem
-            follow_entry.delete()
-            message = 'Unfollowed {}'.format(topic_name)
-        except UserFollowing.DoesNotExist:
-            UserFollowing.objects.create(user=user, topic=topic)
-            message = 'Followed {}'.format(topic_name)
-        
-        return JsonResponse({'message':message})
-    else:
-        return JsonResponse({'error': 'Invalid request method'})
 
 
 def register_user(request):
@@ -148,11 +122,27 @@ def register_user(request):
         if password1 != password2:
             messages.error(request, 'passwords do not match')
         else:
-            user = User.objects.create_user(username=username,
-                        password=password1, email=email)
-            user.first_name = first_name
-            user.last_name = last_name
-            user.save()
+            user_service.create_user(username=username, password=password1,
+                email=email, first_name=first_name, last_name = last_name)
         return redirect('login-user')
     
     return render(request, 'base/register_user.html')
+
+
+@csrf_exempt
+@login_required
+def toggle_follow(request):
+    if request.method == 'POST':
+        user = request.user
+        topic = request.POST.get('topic_name')  
+        try:
+            user_service.unfollow_topic(user=user, topic=topic)  
+            message = 'Unfollowed {}'.format(topic)
+        except UserFollowing.DoesNotExist:
+            user_service.follow_topic(user=user, topic=topic)  # if it DoesNotExist then follow
+            message = 'Followed {}'.format(topic)
+        
+        return JsonResponse({'message':message})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
+
