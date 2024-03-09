@@ -1,6 +1,6 @@
 <head>
     {% extends 'main.html' %}
-    {% load static %}
+    {% load static %}  <!--this tag is loaded for images -->
 </head>
 
 <body>
@@ -19,9 +19,17 @@
                     
                     <div>
                         <p>{{room.created}}
-                            <hr>
-                            hosted by {{room.host.username }}
+                            <hr>                         
                         </p>
+                        <div class="grid-item">
+                            <p>hosted by {{room.host.username }}</p>
+                            {% if room.host != request.user %}
+                                <input type="button" class="btn btn-outline-primary btn-sm" role="button"
+                                onclick="joinRoom(this)" data-id="{{ room.id }}"
+                                value="{% if request.user in participants %} Joined {% else %} Join {% endif %}"/>
+                            {% endif %}
+                        </div>
+                        
                     </div>
                     <div class="second-row">
                         
@@ -34,7 +42,7 @@
                                         </button>
                                         <button class="trash">  <img src="{% static 'images/edit.svg' %}"/>
                                         </button> -->
-                                        <button class="more">  <img src="{% static 'images/more.svg' %}"/>
+                                        <button class="icon">  <img src="{% static 'images/more.svg' %}"/>
                                         </button> 
                                     </form>                                  
                                 </div>

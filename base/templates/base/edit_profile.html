@@ -1,0 +1,30 @@
+<head>
+    {% extends 'main.html' %}
+    
+</head>
+
+<body>
+    {% block content %}
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label>First Name</label>
+        <input type="text" name="first-name" value="{{request.user.first_name}}"/>
+
+        <label>Last Name</label>
+        <input type="text" name="last-name" value="{{request.user.last_name}}"/>
+
+        <label>Email</label>
+        <input type="email" name="email" value="{{request.user.email}}"/>
+
+        <label>Username</label>
+        <input type="text" name="username" value="{{request.user.username}}" />
+        
+        {{form}}
+
+        <a href="{{request.META.HTTP_REFERER}}">Cancel</a>
+        <button type="submit" >Save</button>
+
+    </form>
+    {% endblock %}
+</body>

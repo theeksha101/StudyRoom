@@ -1,10 +1,64 @@
-{% extends 'main.html' %}
+<head>
+    {% extends 'main.html' %}
+    {%  load static %}
+</head>
 
 {% block content %}
+<body>
+    <div class="room-container">
 
-    <form method="POST" action="">
-        {% csrf_token %}
-        
-    </form>
+        <div class="header">
+            {{request.user}}
+            <a class="icon" href="{% url 'edit_profile' user_id=request.user.id username=request.user.username%}">
+                <img src="{% static 'images/edit.svg' %}" />
+            </a>
+        </div>
+
+          <div class="row">
+            <div class="column side" style="background-color:rgb(154, 154, 255)">
+                <h5>Followed Topics</h5>
+                <hr>
+                {% for topic in topic_following %}
+                    {{topic.topic}}
+                    <br>
+                {% endfor %}
+            </div>
+            <div class="column middle">
+                <div class="column left">
+                    <!-- Left column content goes here -->
+                
+                    <div class="left-column-content">
+                        <img class="profile-pic" src="{{user.profile_pic.url}}"/>
+                    </div>
+                </div>
+                <div class="column right">
+                    <!-- Right column content goes here -->
+                
+                    <div class="right-column-content">
+                        <!-- Content for the right column -->
+                        <ul style="list-style: none;">
+                            <li>About</li>
+                            <li>Followers</li>
+                            <li>Rooms Hosted</li>
+                            <li></li>
+                        </ul>
+                    </div>
+                </div>               
+
+            </div>
+
+            <div class="column side" style="background-color:rgb(154, 154, 255)">
+                <h5>Followed Rooms</h5>
+                <hr>
+                {% for room in room_following %}
+                    {{room}}
+                    <br>
+                {% endfor %}
+            </div>
+          </div>
+          
+    </div>
+</body>
+
 
 {% endblock %}

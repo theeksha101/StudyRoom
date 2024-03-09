@@ -25,6 +25,9 @@ SECRET_KEY = 'django-insecure-ff6&2p0n()-yoc_3t%1z%x%#ytmlohfmign0ao$_&8t9o(kgxn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 ALLOWED_HOSTS = []
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

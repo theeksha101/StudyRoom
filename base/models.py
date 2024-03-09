@@ -16,7 +16,7 @@ class Room(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True) # null=True (can be blank)
-    # participants = models.
+    participants = models.ManyToManyField(User, related_name='joined_rooom')
     updated = models.DateTimeField(auto_now=True)  # date time changes everytime we save. 
     created = models.DateTimeField(auto_now_add=True)  # created date shown
     # models have default id created starting from 1.
@@ -44,10 +44,22 @@ class Message(models.Model):
 # class UserProfile(models.Model):
     # 
 
-class UserFollowing(models.Model):
+class TopicFollowing(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE, null=True)
     
     def __str__(self) -> str:
         return f"{str(self.user)}, {self.topic}"
+
+
+class UserProfile(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    about = models.TextField(null=True)
+    profile_pic = models.ImageField(upload_to="images/", null=True)
+    updated = models.DateTimeField(auto_now=True, null=True)
+    created = models.DateTimeField(auto_now_add=True, null=True)
+
+
+    def __str__(self) -> str:
+        return f"{str(self.user)}, {str(self.about)}"

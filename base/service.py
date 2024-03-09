@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.db.models import Q
-from .models import Room, Topic, UserFollowing, Message
-from .forms import RoomForm
+from .models import Room, Topic, TopicFollowing, Message, UserProfile
+from .forms import RoomForm, UserProfileForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -49,6 +49,16 @@ class RoomService:
         room = self.get_room(pk)
         room.delete()
 
+    def add_participant(self, id, user):
+        room = self.get_room(id)
+        room.participants.add(user)
+        room.save()
+
+    def remove_participant(self, id, user):
+        room = self.get_room(id)
+        room.participants.remove(user)
+        room.save()
+
     def _find_default_room(self):
         """
         Finds default room
@@ -85,14 +95,21 @@ class UserService:
     
 
     def user_topic(self, user, topic): 
-        return UserFollowing.objects.get(user=user, topic=topic)
+        return TopicFollowing.objects.get(user=user, topic=topic)
     
     
     def unfollow_topic(self, user, topic):
         topic_name = Topic.objects.get(name=topic)
-        follow_entry = UserFollowing.objects.get(user=user, topic=topic_name)
+        follow_entry = TopicFollowing.objects.get(user=user, topic=topic_name)
         follow_entry.delete()
 
     def follow_topic(self, user, topic):
         topic_name = Topic.objects.get(name=topic)
-        UserFollowing.objects.create(user=user, topic=topic_name)
+        TopicFollowing.objects.create(user=user, topic=topic_name)
+
+    def edit_profile(self, user, info, img):
+        user= UserProfile.objects.get(user=user)
+        form = UserProfileForm(info, img, instance=user)
+        if form.is_valid():
+            form.save()
+            

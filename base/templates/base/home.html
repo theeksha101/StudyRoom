@@ -17,12 +17,12 @@
     
             <div>
                 <div>
-                    <a href="{% url 'home' %}">All</a>
+                    <a href="{% url 'home' %}" style="text-decoration: none;">All</a>
                 </div>
         
                 {% for topic in topics %}
                    <div class="grid-item">
-                        <a href="{% url 'home' %}?r={{topic.name}}"> {{topic.name}} </a>
+                        <a href="{% url 'home' %}?r={{topic.name}}" style="text-decoration: none;"> {{topic.name}} </a>
         
                         <input type="button" class="button" role="button" style="margin-top: 10px;"
                         onclick="changeStatus(this)" data-topic="{{ topic.name }}"
@@ -38,7 +38,7 @@
                 <h5>{{room_count}} rooms available </h5>
             </div>
             
-            <a href="{% url 'create-room' %}"> Create Room </a>
+            <a href="{% url 'create-room' %}" style="text-decoration: none;"> Create Room </a>
             
             <div>
     
@@ -46,15 +46,17 @@
                     <div>
                         {% if request.user.username == room.host.username %}
     
-                            <a href="{% url 'update-room' room.id %}">Edit</a>
-                            <a href="{% url 'delete-room' room.id %}">Delete</a>
+                            <a href="{% url 'update-room' room.id %}" style="text-decoration: none;">Edit</a>
+                            <a href="{% url 'delete-room' room.id %}" style="text-decoration: none;">Delete</a>
     
                         {% endif %}
                         <span>@ {{room.host.username}} </span>
+                        <input type="button" class="user-button" role="button" value="Follow" />
+                        <!-- onclick="changeStatus(this)" data-topic="{{ topic.name }}"
+                        value="{% if topic.name in list_topic_following %} Following {% else %} Follow {% endif %}"/> -->
                         <h4>
-                            <!-- {{room.id}} -- <a href="/room/{{room.id}}"> {{room.name}}</a>  -->
                             <!-- if we change the url path to path('room_page/') from urlpatterns, it won't matter cause 'room' from below, accesses name=room from urlpatters. -->
-                            {{room.id}} -- <a href="{% url 'room' room.id %}"> {{room.name}}</a> 
+                            <a href="{% url 'room' room.id %}" style="text-decoration: none;"> {{room.name}}</a> 
                         </h4>
                         <small>{{room.topic.name}}</small>
                         <hr>
@@ -69,9 +71,14 @@
                 <h2>Top Hosts</h2>
             </div>
             <hr>
-            {% for users in all_users %}
+            {% for user in all_users %}
                 <div>
-                    <h4> {{users.username}} </h4>
+                    <h4>
+                        <a href="{% url 'user_profile' user_id=user.id username=user.username %}"
+                        style="text-decoration: none;">
+                         {{user.username}} 
+                        </a>
+                    </h4>
                 </div>
             {% endfor %}
         </div>

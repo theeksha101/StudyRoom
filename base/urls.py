@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 
 
@@ -10,7 +12,14 @@ urlpatterns = [
     path('create-room/', views.create_room, name='create-room'),
     path('update-room/<str:pk>', views.update_room, name='update-room'),
     path('delete-room/<str:pk>', views.delete_room, name='delete-room'),
-    # path('is-following/<str:id_>', views.is_following, name='is-following'),
     path('register/', views.register_user, name='register-user'),
     path('toggle_follow/', views.toggle_follow, name='toggle_follow'),
+    path('join_room/', views.join_room, name='join_room'),
+    path('profile/<int:user_id>/<str:username>', views.user_profile, name='user_profile'),
+    path('edit-profile/<int:user_id>/<str:username>', views.edit_profile, name='edit_profile'),
+
 ]
+
+if settings.DEBUG:
+        urlpatterns += static(settings.MEDIA_URL,
+                              document_root=settings.MEDIA_ROOT)

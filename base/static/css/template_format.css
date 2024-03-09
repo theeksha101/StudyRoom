@@ -1,16 +1,18 @@
 * {
-
     box-sizing: border-box;
+    gap: 10px;
 }
+
 .room-container{
-    margin-top: 50px;
+    /* margin-top: 50px; */
+    margin-left: 20px;
 }
 /* Style the header */
 .header {
   background-color: #f1f1f1;
-  padding: 30px;
+  padding: 10px;
   text-align: center;
-  font-size: 35px;
+  font-size: 25px;
 }
 
 .grid-item{
@@ -19,7 +21,7 @@
     justify-content: space-between;
 }
 
-.more{
+.icon{
     border: none;
 }
 
@@ -28,26 +30,28 @@
   float: left;
   padding: 10px;
   height: 300px; /* Should be removed. Only for demonstration */
+  
 }
 
 /* Left and right column */
 .column.side {
-  width: 25%;
-
+  width: 26%;
+  border-radius: 8px;
 }
 
 /* Middle column */
 .column.middle {
-  width: 50%;
-  margin-left: 50px;
+  width: 45%;
+  /* margin-left: 50px; */
   border-radius: 8px;
   background-color:rgb(176, 176, 255);
   height: 530px;
+  
 }
 
 /* Additional styling for the second row */
 .column.middle .second-row {
-    margin-top: 20px; /* Adjust the margin as needed */
+    margin-top: 9px; /* Adjust the margin as needed */
     background-color: #f1f1f1;
     border-radius: 8px;
     padding: 20px;
@@ -60,6 +64,7 @@
   content: "";
   display: table;
   clear: both;
+  width: 20%;
 }
 
 /* Style the footer */

@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.db.models import Q
-from .models import Room, Topic, UserFollowing, Message
-from .forms import RoomForm
+from .models import Room, Topic, TopicFollowing, Message, UserProfile
+from .forms import RoomForm, UserProfileForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -30,7 +30,7 @@ def home(request):
     room_count = rooms.count()
     all_users = User.objects.values()
     logged_in_user = str(request.user)
-    topic_following = UserFollowing.objects.filter(user__username__contains=logged_in_user)
+    topic_following = TopicFollowing.objects.filter(user__username__contains=logged_in_user)
     list_topic_following = [str(topic_following[i].topic) for i in range(len(topic_following))]
 
     context = {'rooms': rooms, 'topics': topics, 'room_count': room_count,
@@ -40,13 +40,17 @@ def home(request):
 
     
 def room(request, pk):
-    print(request)
+    room = room_service.get_room(pk)
+    participants = room.participants.all()
+    
     if request.method == 'POST':
         inc_msg = request.POST.get('inc_msg')
         user = request.user
         room_service.create_message(user, inc_msg, pk)
         return redirect(reverse('room', args=[pk]))
-    context = {'room': room_service.get_room(pk), 'messages': room_service.get_room_msg(pk)}
+    context = {'room': room_service.get_room(pk), 'messages': room_service.get_room_msg(pk), 
+               'participants': participants}
+    
     return render(request, 'base/room.html', context)
 
 
@@ -81,6 +85,21 @@ def delete_room(request, pk):
     return render(request, 'base/delete.html', {'obj':room})
 
 
+@csrf_exempt
+@login_required
+def join_room(request):
+    if request.method == 'POST':
+        user = request.user  # current logged in user
+        room_id = request.POST.get('room_id')  # get current user's id
+        button_value = request.POST.get('button_value')   # what is the button value
+        if button_value == "Join":
+            room_service.add_participant(id=room_id, user=user)
+        else:
+            room_service.remove_participant(id=room_id, user=user)
+        return JsonResponse({})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
+    
 
 def login_user(request):
     if request.method == 'POST':
@@ -138,7 +157,7 @@ def toggle_follow(request):
         try:
             user_service.unfollow_topic(user=user, topic=topic)  
             message = 'Unfollowed {}'.format(topic)
-        except UserFollowing.DoesNotExist:
+        except TopicFollowing.DoesNotExist:
             user_service.follow_topic(user=user, topic=topic)  # if it DoesNotExist then follow
             message = 'Followed {}'.format(topic)
         
@@ -146,3 +165,32 @@ def toggle_follow(request):
     else:
         return JsonResponse({'error': 'Invalid request method'})
 
+
+def user_profile(request, user_id, username):  # shows profile
+    user = UserProfile.objects.get(user=request.user)    
+    topic_following = TopicFollowing.objects.filter(user=user_id)
+    room_following = Room.objects.filter(participants=user_id)
+    
+    context = {'topic_following': topic_following, 'room_following': room_following, 
+               'user': user}
+    
+    return render(request, 'base/user_profile.html', context)
+
+
+def edit_profile(request, user_id, username):
+    if request.method == 'POST':  # this has to be capital idk why
+        info = request.POST  # retrieves text from web
+        img = request.FILES  # retrieves img 
+        user = request.user  # retrieves user
+
+        user_service.edit_profile(user=user, info=info, img=img)
+
+        return redirect(reverse('user_profile', args=[user_id, username]))
+    else:
+        form = UserProfileForm()
+        
+    user= UserProfile.objects.get(user=request.user)
+    form = UserProfileForm(instance=user)
+    context = {'form': form}
+
+    return render(request, 'base/edit_profile.html', context)
