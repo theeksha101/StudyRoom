@@ -108,8 +108,12 @@ class UserService:
         TopicFollowing.objects.create(user=user, topic=topic_name)
 
     def edit_profile(self, user, info, img):
-        user= UserProfile.objects.get(user=user)
-        form = UserProfileForm(info, img, instance=user)
+        try:
+            user= UserProfile.objects.get(user=user)
+            form = UserProfileForm(info, img, instance=user)
+        except UserProfile.DoesNotExist:
+            form = UserProfileForm(info, img)
+        
         if form.is_valid():
             form.save()
             

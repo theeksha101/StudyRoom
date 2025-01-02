@@ -2,14 +2,16 @@
 
 {% block content %}
 
-<div>
-    <form method="POST" action="">
+<div class="column side"></div>
+<div class="column middle" style="margin-top: 30px; height: 550px;">
+    <form method="POST">
         {% csrf_token %}
         <!-- Cross Site Request Forgery protection. -->
-        {{form}}
+            {{form}}
         <input  type="submit" value="Submit"/>
     
     </form>
 </div>
+<div class="column side"></div>
 
 {% endblock %}

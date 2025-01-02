@@ -8,27 +8,27 @@
     <div class="room-container">
 
         <div class="header">
-            {{request.user}}
-            <a class="icon" href="{% url 'edit_profile' user_id=request.user.id username=request.user.username%}">
+            {{user.username}}
+            <a class="icon" href="{% url 'edit_profile' user_id=user.id username=user.username%}">
                 <img src="{% static 'images/edit.svg' %}" />
             </a>
         </div>
 
           <div class="row">
-            <div class="column side" style="background-color:rgb(154, 154, 255)">
+            <div class="column side" style="background-color:rgb(154, 154, 255); height: 530px;">
                 <h5>Followed Topics</h5>
                 <hr>
                 {% for topic in topic_following %}
                     {{topic.topic}}
-                    <br>
+                    <hr>
                 {% endfor %}
             </div>
-            <div class="column middle">
+            <div class="column middle" style="height: 530px;">
                 <div class="column left">
                     <!-- Left column content goes here -->
                 
                     <div class="left-column-content">
-                        <img class="profile-pic" src="{{user.profile_pic.url}}"/>
+                        <img class="profile-pic" src="{{user_profile.profile_pic.url}}" alt="Add Profile Photo"/>
                     </div>
                 </div>
                 <div class="column right">
@@ -36,23 +36,43 @@
                 
                     <div class="right-column-content">
                         <!-- Content for the right column -->
-                        <ul style="list-style: none;">
-                            <li>About</li>
-                            <li>Followers</li>
-                            <li>Rooms Hosted</li>
-                            <li></li>
-                        </ul>
+                        <div class="right-column-content-about">
+                            <p style="font-weight: normal;">{{user_profile.about}}</p>
+                        </div>
                     </div>
-                </div>               
+                </div>    
+                <div style="clear: both;"></div>
+                <div class="middle-col-second-row">            
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link active" id="followings-tab" data-bs-toggle="tab"
+                           data-bs-target="#followings" type="button" role="tab" aria-controls="home" 
+                           aria-selected="true">Followings</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="followers-tab" data-bs-toggle="tab" 
+                          data-bs-target="#followers" type="button" role="tab" aria-controls="profile"
+                          aria-selected="false">Followers</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="followings" role="tabpanel" aria-labelledby="followings-tab">
+                        here followings will be shown
+                        </div>
+                        <div class="tab-pane fade" id="followers" role="tabpanel" aria-labelledby="followers-tab">
+                        here followers will be shown
+                        </div>
+                    </div>
+                </div>
 
             </div>
 
-            <div class="column side" style="background-color:rgb(154, 154, 255)">
+            <div class="column side" style="background-color:rgb(154, 154, 255); height: 530px;">
                 <h5>Followed Rooms</h5>
                 <hr>
                 {% for room in room_following %}
                     {{room}}
-                    <br>
+                    <hr>
                 {% endfor %}
             </div>
           </div>

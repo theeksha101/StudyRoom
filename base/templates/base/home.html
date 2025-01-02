@@ -50,10 +50,15 @@
                             <a href="{% url 'delete-room' room.id %}" style="text-decoration: none;">Delete</a>
     
                         {% endif %}
-                        <span>@ {{room.host.username}} </span>
-                        <input type="button" class="user-button" role="button" value="Follow" />
-                        <!-- onclick="changeStatus(this)" data-topic="{{ topic.name }}"
-                        value="{% if topic.name in list_topic_following %} Following {% else %} Follow {% endif %}"/> -->
+                        <a href="{% url 'user_profile' user_id=room.host.id username=room.host.username%}"
+                            style="text-decoration: none;">@ {{room.host.username}} </a>
+                        {% if request.user.is_authenticated %}
+                                {% if room.host.username != request.user.username %}
+                                <input type="button" class="user-button" role="button"
+                                onclick="followUnfollow(this)" data-id="{{ room.host.id }}"
+                                value="{% if room.host in followings %} Following {% else %} Follow {% endif %}"/>
+                                {% endif %}
+                        {% endif %}
                         <h4>
                             <!-- if we change the url path to path('room_page/') from urlpatterns, it won't matter cause 'room' from below, accesses name=room from urlpatters. -->
                             <a href="{% url 'room' room.id %}" style="text-decoration: none;"> {{room.name}}</a> 

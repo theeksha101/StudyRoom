@@ -5,26 +5,43 @@
 
 <body>
     {% block content %}
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <label>First Name</label>
-        <input type="text" name="first-name" value="{{request.user.first_name}}"/>
-
-        <label>Last Name</label>
-        <input type="text" name="last-name" value="{{request.user.last_name}}"/>
-
-        <label>Email</label>
-        <input type="email" name="email" value="{{request.user.email}}"/>
-
-        <label>Username</label>
-        <input type="text" name="username" value="{{request.user.username}}" />
-        
-        {{form}}
-
-        <a href="{{request.META.HTTP_REFERER}}">Cancel</a>
-        <button type="submit" >Save</button>
-
-    </form>
+    <div class="column side"></div>
+    <div class="column middle" style="height: 550px; margin-top: 30px;">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+    
+            <div>
+                <label>First Name</label>
+                <input type="text" name="first-name" value="{{user.first_name}}"/>    
+            </div>
+    
+            <div>
+                <label>Last Name</label>
+                <input type="text" name="last-name" value="{{user.last_name}}"/>    
+            </div>
+    
+            <div>
+                <label>Email</label>
+                <input type="email" name="email" value="{{user.email}}"/>    
+            </div>
+    
+            <div>
+                <label>Username</label>
+                <input type="text" name="username" value="{{user.username}}" />    
+            </div>
+      
+            {{form}}
+    
+            <div>
+                <a href="{{request.META.HTTP_REFERER}}">Cancel</a>
+            </div>
+            
+            <div>
+                <button type="submit" >Save</button>
+            </div>
+    
+        </form>
+    </div>
+    <div class="column side"></div>
     {% endblock %}
 </body>

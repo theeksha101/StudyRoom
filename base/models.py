@@ -55,7 +55,7 @@ class TopicFollowing(models.Model):
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    about = models.TextField(null=True)
+    about = models.TextField(null=True, max_length=300)
     profile_pic = models.ImageField(upload_to="images/", null=True)
     updated = models.DateTimeField(auto_now=True, null=True)
     created = models.DateTimeField(auto_now_add=True, null=True)
@@ -63,3 +63,12 @@ class UserProfile(models.Model):
 
     def __str__(self) -> str:
         return f"{str(self.user)}, {str(self.about)}"
+    
+
+class FollowUser(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='user_set')
+    following = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='following_set')
+    created = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self) -> str:
+        return f"{str(self.user)}, {str(self.following)}"    

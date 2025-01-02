@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.db.models import Q
-from .models import Room, Topic, TopicFollowing, Message, UserProfile
+from .models import Room, Topic, TopicFollowing, Message, UserProfile, FollowUser
 from .forms import RoomForm, UserProfileForm
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
@@ -32,9 +32,15 @@ def home(request):
     logged_in_user = str(request.user)
     topic_following = TopicFollowing.objects.filter(user__username__contains=logged_in_user)
     list_topic_following = [str(topic_following[i].topic) for i in range(len(topic_following))]
+    followings = []
+    if request.user.is_authenticated:
+        current_user_following = FollowUser.objects.filter(user=request.user)
+        for i in current_user_following:
+            followings.append(i.following)
 
     context = {'rooms': rooms, 'topics': topics, 'room_count': room_count,
-               'all_users': all_users, 'list_topic_following': list_topic_following}
+               'all_users': all_users, 'list_topic_following': list_topic_following, 
+               'followings': followings}
 
     return render(request, 'base/home.html', context)
 
@@ -165,23 +171,34 @@ def toggle_follow(request):
     else:
         return JsonResponse({'error': 'Invalid request method'})
 
-
+# TODO retrieve all followers and show
 def user_profile(request, user_id, username):  # shows profile
-    user = UserProfile.objects.get(user=request.user)    
+    user = User.objects.get(id=user_id)
+    try:
+        user_profile = UserProfile.objects.get(user=user) 
+    except UserProfile.DoesNotExist:
+        # When user_profile_object.about and user_profile_object.profile_pic
+        # is not created then filter will just return an empty set 
+        # it will render as an empty string because there are no objects in the QuerySet to access the about attribute from.
+        user_profile = UserProfile.objects.filter(user=user)
+
     topic_following = TopicFollowing.objects.filter(user=user_id)
     room_following = Room.objects.filter(participants=user_id)
-    
+    followings = FollowUser.objects.filter(user=user)
+    followers = FollowUser.objects.filter(following=user)
+
     context = {'topic_following': topic_following, 'room_following': room_following, 
-               'user': user}
+               'user_profile': user_profile, 'user': user}
     
     return render(request, 'base/user_profile.html', context)
 
 
 def edit_profile(request, user_id, username):
+    user = User.objects.get(id=user_id)  # retrieves user
+    print(user)
     if request.method == 'POST':  # this has to be capital idk why
         info = request.POST  # retrieves text from web
         img = request.FILES  # retrieves img 
-        user = request.user  # retrieves user
 
         user_service.edit_profile(user=user, info=info, img=img)
 
@@ -189,8 +206,29 @@ def edit_profile(request, user_id, username):
     else:
         form = UserProfileForm()
         
-    user= UserProfile.objects.get(user=request.user)
-    form = UserProfileForm(instance=user)
-    context = {'form': form}
+    try:
+        user_p= UserProfile.objects.get(user=user)
+        form = UserProfileForm(instance=user_p)
+    except UserProfile.DoesNotExist:
+        form = UserProfileForm(request.POST, request.FILES)
+    context = {'form': form, 'user': user}
 
     return render(request, 'base/edit_profile.html', context)
+
+
+@csrf_exempt
+@login_required
+def follow_unfollow(request):
+    if request.method == 'POST':
+        current_user = request.user
+        other_user_id = request.POST.get('user_id')
+        user_to_follow = get_object_or_404(User, pk=other_user_id)
+
+        if not FollowUser.objects.filter(following=other_user_id):
+            FollowUser.objects.create(user=current_user, following=user_to_follow).save()
+        else:
+            FollowUser.objects.filter(following=other_user_id).delete()
+        
+        return JsonResponse({})
+    else:
+        return JsonResponse({'error': 'Invalid request method'})

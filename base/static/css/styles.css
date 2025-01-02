@@ -48,25 +48,11 @@ body, html {
   outline: 0;
 }
 
-nav {
+.nav-bar {
     background-color: rgb(98, 98, 255);
     color: #fff;
-    padding: 15px;
+    padding: 10px;
 }
-
-nav ul {
-    list-style: none;
-}
-
-nav ul li {
-    display: inline-block;
-    /* margin-right: 290px; */
-}
-
-/* .inline-list li { */
-    /* display: inline-block; Display list items in a horizontal line */
-    /* margin-right: 10px; Add some spacing between list items */
-/* } */
 
 nav ul li a {
     color: #fff;

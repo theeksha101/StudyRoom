@@ -17,7 +17,7 @@ urlpatterns = [
     path('join_room/', views.join_room, name='join_room'),
     path('profile/<int:user_id>/<str:username>', views.user_profile, name='user_profile'),
     path('edit-profile/<int:user_id>/<str:username>', views.edit_profile, name='edit_profile'),
-
+    path('follow_user/', views.follow_unfollow, name='follow_user'),
 ]
 
 if settings.DEBUG:

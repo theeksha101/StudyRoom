@@ -1,6 +1,5 @@
 function changeStatus(button){
     var topicName = $(button).data('topic');
-    console.log(topicName)
     $.ajax({
         method: 'POST',
         url: '/toggle_follow/',
@@ -23,7 +22,6 @@ function changeStatus(button){
 
 function joinRoom(button){
     var room_id = $(button).data('id');
-    console.log(room_id)
     $.ajax({
         method: 'POST',
         url: '/join_room/',
@@ -43,3 +41,27 @@ function joinRoom(button){
         }
     });
 }
+
+
+function followUnfollow(button){
+    var user_id = $(button).data('id');
+    $.ajax({
+        method: 'POST',
+        url: '/follow_user/',
+        data: {'user_id': user_id,
+               'button_value': button.value},
+        success: function(response){
+
+            if (button.value === 'Follow'){
+                button.value = 'Following';
+            }
+            else{
+                button.value = 'Follow';
+            }
+        },
+        error: function(error){
+            console.error('Error', error);
+        }
+    });
+}
+
